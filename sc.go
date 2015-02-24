@@ -195,12 +195,14 @@ func (t *C) run(args []string) error {
 					break cmdLoop
 				}
 			}
-			arg = t.Default
-		defLoop:
-			for _, cc := range t.Cmds {
-				if cc.Name == arg {
-					c = cc
-					break defLoop
+			if c == nil {
+				arg = t.Default
+			defLoop:
+				for _, cc := range t.Cmds {
+					if cc.Name == arg {
+						c = cc
+						break defLoop
+					}
 				}
 			}
 			if c == nil {
