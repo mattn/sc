@@ -37,6 +37,16 @@ func main() {
 			},
 			Desc: "untra del command",
 			Run: func(c *sc.C, args []string) error {
+				if len(args) == 0 {
+					return sc.UsageError
+				}
+				if c.LookupFlag("-v").Bool() {
+					for _, arg := range args {
+						fmt.Println("deleted", arg)
+					}
+				} else {
+					fmt.Println("deleted", args)
+				}
 				return nil
 			},
 		},
