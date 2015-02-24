@@ -11,8 +11,8 @@ sc.Cmds{
 	{
 		Name: "add",
 		Flags: sc.Flags{
-			{Name: "-n", Desc: "name", Type: sc.String, Usage: func() { fmt.Println("invalid name") }},
-			{Name: "-v", Desc: "verbose", Type: sc.Bool, Usage: func() { fmt.Println("invalid option") }},
+			{Name: "-n", Desc: "name", Type: sc.String}},
+			{Name: "-v", Desc: "verbose", Type: sc.Bool}},
 		},
 		Desc: "untra add command",
 		Run: func(c *sc.C, args []string) error {
