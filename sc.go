@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strconv"
+	"strings"
 )
 
 type usageError int
@@ -36,7 +37,6 @@ type F struct {
 	Name  string
 	Desc  string
 	Type  FlagType
-	Usage func()
 	value interface{}
 }
 
@@ -132,37 +132,54 @@ func (t *C) run(args []string) error {
 		arg := args[i]
 		if arg != "" && arg[0] == '-' {
 			f := t.LookupFlag(arg)
+			var hs bool
+			var s string
 		flagLoop:
 			for _, ff := range t.Flags {
 				if ff.Name == arg {
 					f = ff
 					break flagLoop
 				}
+				if strings.HasPrefix(arg, ff.Name+"=") {
+					hs = true
+					s = arg[len(ff.Name)+1:]
+					f = ff
+					break flagLoop
+				}
 			}
 			if f == nil {
-				if t.Usage != nil {
-					t.Usage(t)
-					return errors.New("invalid flag")
-				}
 				return UsageError
+			}
+			if f.Type != Bool && !hs {
+				if i < len(args)-1 {
+					s = args[i+1]
+					i++
+				} else {
+					return UsageError
+				}
 			}
 			switch f.Type {
 			case Bool:
-				f.value = true
+				if hs {
+					if v, err := strconv.ParseBool(s); err == nil {
+						f.value = v
+					}
+				} else {
+					f.value = true
+				}
 			case String:
 				f.value = args[i+1]
-				i++
 			case Float64:
-				v, err := strconv.ParseFloat(args[i+1], 64)
-				if err != nil {
-				} else {
+				if v, err := strconv.ParseFloat(s, 64); err == nil {
 					f.value = v
+				} else {
+					return UsageError
 				}
 			case Int64:
-				v, err := strconv.ParseInt(args[i+1], 10, 64)
-				if err != nil {
-				} else {
+				if v, err := strconv.ParseInt(args[i+1], 10, 64); err == nil {
 					f.value = v
+				} else {
+					return UsageError
 				}
 			}
 		} else {

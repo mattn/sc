@@ -10,16 +10,22 @@ func main() {
 		{
 			Name: "add",
 			Flags: sc.Flags{
-				{Name: "-n", Desc: "name", Type: sc.String, Usage: func() { fmt.Println("invalid name") }},
-				{Name: "-v", Desc: "verbose", Type: sc.Bool, Usage: func() { fmt.Println("invalid option") }},
+				{Name: "-n", Desc: "name", Type: sc.String},
+				{Name: "-v", Desc: "verbose", Type: sc.Bool},
 			},
 			Desc: "untra add command",
 			Run: func(c *sc.C, args []string) error {
 				if len(args) == 0 {
 					return sc.UsageError
 				}
-				fmt.Println(c.LookupFlag("-n").String())
-				fmt.Println("added", args)
+				// verbose
+				if c.LookupFlag("-v").Bool() {
+					for _, arg := range args {
+						fmt.Println("added", arg)
+					}
+				} else {
+					fmt.Println("added", args)
+				}
 				return nil
 			},
 		},
