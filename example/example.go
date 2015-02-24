@@ -54,8 +54,7 @@ func main() {
 		Default: "add",
 		Desc:    "super cool command",
 		Usage: func(c *sc.C) {
-			fmt.Println(c.Name, "fooo")
-			fmt.Println("    ", c.Desc)
+			fmt.Println(c.Name, c.Desc)
 			c.PrintCommands()
 		},
 	})

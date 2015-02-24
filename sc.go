@@ -187,6 +187,9 @@ func (t *C) run(args []string) error {
 				return t.Run(t, args[i:])
 			}
 			var c *C
+			if arg == "" {
+				arg = t.Default
+			}
 		cmdLoop:
 			for _, cc := range t.Cmds {
 				cc.main = t.main
@@ -196,19 +199,9 @@ func (t *C) run(args []string) error {
 				}
 			}
 			if c == nil {
-				arg = t.Default
-			defLoop:
-				for _, cc := range t.Cmds {
-					if cc.Name == arg {
-						c = cc
-						break defLoop
-					}
-				}
-			}
-			if c == nil {
 				if t.Usage != nil {
 					t.Usage(t)
-					return errors.New("invalid flag")
+					return usageErrorFire
 				}
 			}
 			err := c.run(args[i:])
